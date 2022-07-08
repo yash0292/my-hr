@@ -12,6 +12,14 @@ const UserSchema = new Schema({
 		type: String,
 		required: [true, "Enter a password"],
 	},
+	role:{
+		type:String,
+		required:true,
+		default:"employee",
+		enum:["employee", "admin"]
+	}
+},{
+	timestamps:true
 });
 
 mongoose.models ={} 

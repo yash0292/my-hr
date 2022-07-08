@@ -8,8 +8,10 @@ connectDB();
 
 const handler = async (req, res) => {
 	const { method } = req;
-    console.log(method)
 	const { name, email, password } = req.body;
+	if(!name || !email || !password){
+		return res.status(422).json({error:"Fields are required"})
+	}
 
 	switch (method) {
 		case "POST":
@@ -66,36 +68,6 @@ const handler = async (req, res) => {
 			// 	res.status(400).json({ error: "Not Allowed" });
 			// }
 			break;
-		case "GET":
-			try {
-				let user= await Users.findOne({email});
-				if(!user){
-					res.status(401).json({errors:[{msg:'Invalid credentials'}]})
-				}
-				//match password
-				const isMatch = await bcrypt.compare(password, user.password);
-				if(!isMatch){
-					res.status(401).json({errors:[{msg:'Invalid username or password, please try again!...'}]})
-				}
-				const payload = {
-					user:{
-						id: user.id
-					}
-				};
-
-				jwt.sign(
-					payload,
-					process.env.JWT_SECRET,
-					{expiresIn: "1d"},
-					(err,token)=>{
-						if(err) throw err;
-						res.status(200).json({token})
-					}
-				)
-			} catch(error) {
-				console.error(error);
-				res.status(500).send("server error");
-			}
 	}
 };
 
